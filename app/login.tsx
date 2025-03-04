@@ -2,138 +2,176 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
-  Alert,
   TouchableOpacity,
   StyleSheet,
-  Image, // Import Image component
+  StatusBar,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 
-export default function LoginScreen() {
+const { height, width } = Dimensions.get("window");
+
+const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    if (username && password) {
-      Alert.alert("Login Successful", `Welcome ${username}`);
-    } else {
-      Alert.alert("Error", "Please enter both username and password");
-    }
+    console.log("Login attempted with:", username, password);
   };
 
   return (
-    <View style={styles.mainContainer}>
-      {/* Blue Area at the top */}
-      <View style={styles.blueArea} />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <StatusBar backgroundColor="#4287f5" barStyle="light-content" />
 
-      <View style={styles.container}>
-        {/* Welcome Text */}
-        <Text style={styles.title}>Welcome!</Text>
-
-        {/* Username Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-        />
-
-        {/* Password Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        {/* Login Button */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={handleLogin}
-        >
-          <Text style={styles.buttonText}>Log in</Text>
-        </TouchableOpacity>
-
-        {/* Forgot Password Link */}
-        <TouchableOpacity style={styles.forgotPasswordContainer}>
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>FINNECT</Text>
       </View>
 
-      {/* Image Section below the form */}
-      <Image
-        source={require("../assets/images/pcsLogo.jpeg")} // Replace with your image path
-        style={styles.image}
-        resizeMode="contain"
-      />
-    </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.welcomeText}>Welcome Back!</Text>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Enter Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={setUsername}
+              placeholderTextColor="#888"
+            />
+
+            <Text style={styles.label}>Enter Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+              placeholderTextColor="#888"
+            />
+
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Log in</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.footerContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../assets/images/pcsLogo.jpeg")} // Replace with your actual logo path
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.logoText}>
+              PEOPLE'S CREDIT SOLUTIONS PVT LTD.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: "#f5f5f5", // Light gray background for the entire screen
-  },
-  blueArea: {
-    width: "100%",
-    height: 100, // Height for the blue area at the top
-    backgroundColor: "#0049ff", // Blue color
-    marginBottom: 10, // Space below the blue area
-  },
   container: {
+    flex: 1,
+    backgroundColor: "white",
+    width: "100%",
+    overflow: "hidden",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  header: {
+    justifyContent: "center",
+    backgroundColor: "#4287f5",
+    paddingVertical: 30,
+    width: "100%",
+    height: "18%",
+  },
+  headerText: {
+    flex: 1,
+    color: "white",
+    fontSize: 28,
+    paddingLeft: 18,
+    paddingTop: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "bold",
+    textAlign: "left",
+  },
+  contentContainer: {
     flex: 1,
     justifyContent: "flex-start",
     paddingHorizontal: 20,
-    marginTop: 20, // Margin from the blue area
+    paddingTop: 40,
+    width: "100%",
   },
-  title: {
-    fontSize: 32,
+  welcomeText: {
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 40,
-    color: "#333",
+    marginBottom: 20,
     textAlign: "left",
   },
-  input: {
+  inputContainer: {
     width: "100%",
-    height: 50,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 15,
-    marginBottom: 15,
-    backgroundColor: "#fff",
+  },
+  label: {
     fontSize: 16,
+    marginBottom: 8,
+    color: "#333",
+    fontWeight: "500",
   },
-  buttonContainer: {
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginBottom: 15,
+    fontSize: 16,
     width: "100%",
-    height: 50,
-    backgroundColor: "#0049ff", // Blue button
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    marginBottom: 20,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
+  loginButton: {
+    backgroundColor: "#4287f5",
+    borderRadius: 8,
+    paddingVertical: 15,
+    alignItems: "center",
+    marginTop: 10,
+    width: "100%",
+  },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
     fontWeight: "bold",
   },
-  forgotPasswordContainer: {
-    marginTop: 10,
+  footerContainer: {
+    paddingVertical: 20,
+    width: "100%",
+  },
+  logoContainer: {
     alignItems: "center",
+    width: "100%",
   },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: "#007BFF", // Blue color for the text
-    textDecorationLine: "underline",
+  logoImage: {
+    width: width * 0.8, // Adjust the width as needed
+    height: 100,
+    marginBottom: 10,
   },
-  image: {
-    width:300, // Set the desired width
-    height:100 , // Set the desired height
-    marginTop: 0, // Add spacing from the form
-    alignSelf: "center", // Center the image horizontally
+  logoText: {
+    fontSize: 12,
+    color: "#666",
   },
 });
+
+export default LoginScreen;
