@@ -9,7 +9,7 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
-  const navigation = useNavigation(); // Use the navigation hook
+  const navigation = useNavigation(); 
   const router = useRouter();
   const handleProfilePress = () => {
     router.back();
@@ -17,11 +17,11 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
 
   return (
     <View style={styles.header}>
-      {showBackButton && (
+      {/* {showBackButton && (
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>Back</Text>
         </TouchableOpacity>
-      )}
+      )} */}
       <Text style={styles.headerTitle}>{title}</Text>
       <TouchableOpacity style={styles.profileIcon} onPress={handleProfilePress}>
         <Text style={styles.profileText}>A</Text>

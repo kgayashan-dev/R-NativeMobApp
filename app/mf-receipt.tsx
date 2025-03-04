@@ -119,7 +119,10 @@ const MFReceiptLogin: React.FC = () => {
       />
 
       <View style={styles.content}>
-        <Text style={styles.welcomeText}>Welcome Admin!</Text>
+        {/* <Text style={styles.welcomeText}>Welcome Admin!</Text> */}
+        <Text style={styles.subHeadingtext}>
+          Select the options given below to take the receipts list.
+        </Text>
 
         <CustomDropdown
           label="Select Cashier Branch"
@@ -169,6 +172,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  subHeadingtext: {
+    color: "black",
+    fontSize: 18,
+    paddingBottom:16,
+    fontWeight:"300",
   },
   profileIcon: {
     backgroundColor: "white",
