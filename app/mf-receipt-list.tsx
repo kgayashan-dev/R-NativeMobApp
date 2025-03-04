@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
-} from 'react-native';
+} from "react-native";
 import Header from "@/components/Header";
 
 // Define the receipt item type
@@ -23,33 +23,22 @@ const MFReceiptList: React.FC = () => {
   // Sample receipt data
   const receiptData: ReceiptItem[] = [
     {
-      id: 'CK000000012212',
-      name: 'Saman perera',
+      id: "CK000000012212",
+      name: "Saman perera",
       rentalAmount: 100000,
       payAmount: 20000,
       due: 0,
     },
     {
-      id: 'CK000000012212',
-      name: 'Saman perera',
+      id: "CK000000012212",
+      name: "Saman perera",
       rentalAmount: 100000,
       due: 0,
     },
+
     {
-      id: 'CK000000012212',
-      name: 'Saman perera',
-      rentalAmount: 100000,
-      due: 0,
-    },
-    {
-      id: 'CK000000012212',
-      name: 'Saman perera',
-      rentalAmount: 100000,
-      due: 0,
-    },
-    {
-      id: 'CK000000012212',
-      name: 'Saman perera',
+      id: "CK000000012212",
+      name: "Saman perera",
       rentalAmount: 100000,
       due: 0,
     },
@@ -65,17 +54,21 @@ const MFReceiptList: React.FC = () => {
       <View style={styles.receiptDetailsContainer}>
         <View style={styles.rentalAmountContainer}>
           <Text style={styles.rentalAmountLabel}>RentalAmt</Text>
-          <Text style={styles.rentalAmountValue}>= {item.rentalAmount.toLocaleString()}</Text>
+          <Text style={styles.rentalAmountValue}>
+             {item.rentalAmount.toLocaleString()}
+          </Text>
+        </View>
+        <View style={styles.dueContainer}>
+          <Text style={styles.dueLabel}>Due</Text>
+          <Text style={styles.dueValue}> {item.due}</Text>
         </View>
         {item.payAmount && (
           <View style={styles.payAmountContainer}>
-            <Text style={styles.payAmountText}>PAY AMT - {item.payAmount.toLocaleString()}</Text>
+            <Text style={styles.payAmountText}>
+              PAY AMT - {item.payAmount.toLocaleString()}
+            </Text>
           </View>
         )}
-        <View style={styles.dueContainer}>
-          <Text style={styles.dueLabel}>Due</Text>
-          <Text style={styles.dueValue}>= {item.due}</Text>
-        </View>
       </View>
     </View>
   );
@@ -83,10 +76,7 @@ const MFReceiptList: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#4285F4" barStyle="light-content" />
-      <Header
-        title="MF Receipt List"
-        showBackButton={true}
-      />
+      <Header title="MF Receipt List" showBackButton={true} />
       <FlatList
         data={receiptData}
         renderItem={renderReceiptItem}
@@ -106,74 +96,74 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   receiptItemContainer: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    backgroundColor: "#FFFFFF",
+    borderWidth: 0.5,
+    borderColor: "#E0E0E0",
     borderRadius: 8,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   receiptItemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: "#E0E0E0",
   },
   receiptId: {
     fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   receiptName: {
     fontSize: 14,
-    color: '#0086fe',
+    color: "#0086fe",
   },
   receiptDetailsContainer: {
-    padding: 12,
+    padding: 9,
   },
   rentalAmountContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   rentalAmountLabel: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
   },
   rentalAmountValue: {
-    color: '#FF0000',
+    color: "#FF0000",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   payAmountContainer: {
-    backgroundColor: '#FFF4E5',
-    padding: 8,
+    backgroundColor: "#FFF4E5",
+    padding: 6,
     borderRadius: 4,
     marginBottom: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   payAmountText: {
-    color: '#FF9800',
+    color: "#FF9800",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   dueContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   dueLabel: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
   },
   dueValue: {
-    color: '#4CAF50',
+    color: "#4CAF50",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 
