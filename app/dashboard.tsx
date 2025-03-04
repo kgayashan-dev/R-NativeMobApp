@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import Header from "@/components/Header";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +11,9 @@ import {
   FlatList,
   Dimensions,
   ListRenderItem,
-} from 'react-native';
+} from "react-native";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 // Define types for the dropdown data
 type DropdownItem = {
@@ -56,7 +57,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         onPress={() => setVisible(true)}
       >
         <Text style={styles.dropdownButtonText}>
-          {selectedValue || 'Select an option'}
+          {selectedValue || "Select an option"}
         </Text>
       </TouchableOpacity>
 
@@ -84,39 +85,38 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 };
 
 const MFReceiptLogin: React.FC = () => {
-  const [cashierBranch, setCashierBranch] = useState<string>('');
-  const [loanBranch, setLoanBranch] = useState<string>('');
-  const [center, setCenter] = useState<string>('');
+  const [cashierBranch, setCashierBranch] = useState<string>("");
+  const [loanBranch, setLoanBranch] = useState<string>("");
+  const [center, setCenter] = useState<string>("");
 
   const handleSubmit = () => {
-    console.log('Submitted:', { cashierBranch, loanBranch, center });
+    console.log("Submitted:", { cashierBranch, loanBranch, center });
   };
 
   const cashierBranches: DropdownItem[] = [
-    { label: 'Branch 1', value: 'branch1' },
-    { label: 'Branch 2', value: 'branch2' },
+    { label: "Branch 1", value: "branch1" },
+    { label: "Branch 2", value: "branch2" },
   ];
 
   const loanBranches: DropdownItem[] = [
-    { label: 'Branch A', value: 'branchA' },
-    { label: 'Branch B', value: 'branchB' },
+    { label: "Branch A", value: "branchA" },
+    { label: "Branch B", value: "branchB" },
   ];
 
   const centers: DropdownItem[] = [
-    { label: 'Center 1', value: 'center1' },
-    { label: 'Center 2', value: 'center2' },
+    { label: "Center 1", value: "center1" },
+    { label: "Center 2", value: "center2" },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#4285F4" barStyle="light-content" />
-
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>MF Receipt</Text>
-        <TouchableOpacity style={styles.profileIcon}>
-          <Text style={styles.profileText}>A</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Reusable Header */}
+      <Header
+        title="MF Receipt"
+        // onProfilePress={handleProfilePress}
+        showBackButton={true}
+      />
 
       <View style={styles.content}>
         <Text style={styles.welcomeText}>Welcome Admin!</Text>
@@ -153,94 +153,94 @@ const MFReceiptLogin: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   header: {
-    backgroundColor: '#4285F4',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: "#4285F4",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
     height: "18%",
     paddingVertical: 15,
     paddingHorizontal: 20,
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   profileIcon: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileText: {
-    color: '#4285F4',
-    fontWeight: 'bold',
+    color: "#4285F4",
+    fontWeight: "bold",
   },
   content: {
     padding: 20,
   },
   welcomeText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   dropdownContainer: {
     marginBottom: 15,
   },
   label: {
     marginBottom: 5,
-    color: '#333',
+    color: "#333",
     fontSize: 16,
   },
   dropdownButton: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     padding: 12,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   dropdownButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     width: width * 0.8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     maxHeight: height * 0.5,
   },
   dropdownItem: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   dropdownItemText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   submitButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: "#4285F4",
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   submitButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });
