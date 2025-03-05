@@ -67,7 +67,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* City Image at the Bottom with Top Gradient Overlay */}
-      <ImageBackground
+      {/* <ImageBackground
         source={require("../../assets/images/city.jpeg")}
         style={styles.bottomImage}
         resizeMode="cover"
@@ -77,7 +77,7 @@ export default function HomeScreen() {
           locations={[0, 0.5]}
           style={styles.bottomImageGradient}
         />
-      </ImageBackground>
+      </ImageBackground> */}
     </SafeAreaView>
   );
 }
@@ -85,7 +85,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1e90ff", // Changed background color to match the gradient
+    backgroundColor: "#fff", // Changed background color to match the gradient
   },
   topGradientOverlay: {
     position: "absolute",
