@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import {
-  View,
   Text,
   StyleSheet,
   SafeAreaView,
   StatusBar,
   FlatList,
   TouchableOpacity,
+  Modal,
+  View,
   TextInput,
-  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Header from "@/components/Header";
 
@@ -23,16 +25,17 @@ type ReceiptItem = {
 
 const MFReceiptList: React.FC = () => {
   // State for total amount
-  // State for managing modal and pay amount
-  const [isPayModalVisible, setPayModalVisible] = useState(false);
   const [totalAmount, setTotalAmount] = useState<string>("600000");
 
+  // State for managing modal and pay amount
+  const [isPayModalVisible, setPayModalVisible] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState<ReceiptItem | null>(
     null
   );
   const [payAmount, setPayAmount] = useState("");
+
   // Sample receipt data
-  const receiptData: ReceiptItem[] = [
+  const [receiptData, setReceiptData] = useState<ReceiptItem[]>([
     {
       id: "CK000000012212",
       name: "Saman perera",
@@ -41,87 +44,89 @@ const MFReceiptList: React.FC = () => {
       due: 0,
     },
     {
-      id: "CK000000012212",
+      id: "CK000000012213",
       name: "Saman perera",
       rentalAmount: 100000,
-
       due: 0,
     },
     {
-      id: "CK000000012212",
+      id: "CK000000012214",
       name: "Saman perera",
       rentalAmount: 100000,
       payAmount: 20000,
       due: 0,
     },
-    {
-      id: "CK000000012212",
-      name: "Saman perera",
-      rentalAmount: 100000,
-
-      due: 0,
-    },
-    {
-      id: "CK000000012212",
-      name: "Saman perera",
-      rentalAmount: 100000,
-      payAmount: 20000,
-      due: 0,
-    },
-    {
-      id: "CK000000012212",
-      name: "Saman perera",
-      rentalAmount: 100000,
-      payAmount: 20000,
-      due: 0,
-    },
-  ];
+  ]);
 
   // Handle pay amount entry
   const handlePayAmountEnter = () => {
     if (selectedReceipt) {
-      // Here you can add logic to process the pay amount
+      // Update the selected receipt's payAmount
+      const updatedReceipts = receiptData.map((receipt) =>
+        receipt.id === selectedReceipt.id
+          ? { ...receipt, payAmount: parseFloat(payAmount) }
+          : receipt
+      );
+
+      // Update the receipt data
+      setReceiptData(updatedReceipts);
+
+      // Log the updated receipt
       console.log(`Pay amount entered for ${selectedReceipt.id}: ${payAmount}`);
+
+      // Close the modal and reset the pay amount
       setPayModalVisible(false);
-      setPayAmount('');
+      setPayAmount("");
     }
   };
 
-
-  // Render individual receipt item
-  const renderReceiptItem = ({ item }: { item: ReceiptItem }) => (
-    <View style={styles.receiptItemContainer}>
-      <View style={styles.receiptItemHeader}>
-        <Text style={styles.receiptId}>{item.id}</Text>
-        <Text style={styles.receiptName}>{item.name}</Text>
-      </View>
-      <View style={styles.receiptDetailsContainer}>
-        <View style={styles.rentalAmountContainer}>
-          <Text style={styles.rentalAmountLabel}>RentalAmt</Text>
-          <Text style={styles.rentalAmountValue}>
-            {item.rentalAmount.toLocaleString()}
-          </Text>
-        </View>
-        <View style={styles.dueContainer}>
-          <Text style={styles.dueLabel}>Due</Text>
-          <Text style={styles.dueValue}>{item.due}</Text>
-        </View>
-        {item.payAmount && (
-          <View style={styles.payAmountContainer}>
-            <Text style={styles.payAmountText}>
-              PAY AMT - {item.payAmount.toLocaleString()}
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
+  // Handle total amount change
+  const handleTotalAmountChange = (text: string) => {
+    // Allow only numeric values
+    const numericValue = text.replace(/[^0-9]/g, "");
+    setTotalAmount(numericValue);
+  };
 
   // Handle save action
   const handleSave = () => {
     console.log("Total Amount Saved:", totalAmount);
-    Keyboard.dismiss();
   };
+
+  // Render individual receipt item
+  const renderReceiptItem = ({ item }: { item: ReceiptItem }) => (
+    <TouchableOpacity
+      onPress={() => {
+        setSelectedReceipt(item); // Set the selected receipt
+        setPayModalVisible(true); // Open the modal
+      }}
+    >
+      <View style={styles.receiptItemContainer}>
+        <View style={styles.receiptItemHeader}>
+          <Text style={styles.receiptId}>{item.id}</Text>
+          <Text style={styles.receiptName}>{item.name}</Text>
+        </View>
+        <View style={styles.receiptDetailsContainer}>
+          <View style={styles.rentalAmountContainer}>
+            <Text style={styles.rentalAmountLabel}>RentalAmt</Text>
+            <Text style={styles.rentalAmountValue}>
+              {item.rentalAmount.toLocaleString()}
+            </Text>
+          </View>
+          <View style={styles.dueContainer}>
+            <Text style={styles.dueLabel}>Due</Text>
+            <Text style={styles.dueValue}>{item.due}</Text>
+          </View>
+          {item.payAmount && (
+            <View style={styles.payAmountContainer}>
+              <Text style={styles.payAmountText}>
+                PAY AMT - {item.payAmount.toLocaleString()}
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,7 +135,7 @@ const MFReceiptList: React.FC = () => {
       <FlatList
         data={receiptData}
         renderItem={renderReceiptItem}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
 
@@ -142,7 +147,7 @@ const MFReceiptList: React.FC = () => {
             style={styles.totalAmountInput}
             placeholder="Enter total amount"
             value={totalAmount}
-            onChangeText={setTotalAmount}
+            onChangeText={handleTotalAmountChange}
             keyboardType="numeric"
           />
         </View>
@@ -150,6 +155,37 @@ const MFReceiptList: React.FC = () => {
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Pay Amount Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isPayModalVisible}
+        onRequestClose={() => setPayModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : "padding"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Enter Pay Amount</Text>
+            <TextInput
+              style={styles.payAmountInput}
+              placeholder="Enter Pay Amount"
+              keyboardType="numeric"
+              value={payAmount}
+              onChangeText={(text) => setPayAmount(text.replace(/[^0-9]/g, ""))}
+            />
+            <TouchableOpacity
+              style={styles.enterButton}
+              onPress={handlePayAmountEnter}
+            >
+              <Text style={styles.enterButtonText}>Enter</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -193,6 +229,12 @@ const styles = StyleSheet.create({
   },
   receiptDetailsContainer: {
     padding: 9,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   rentalAmountContainer: {
     flexDirection: "row",
@@ -268,6 +310,37 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  modalContainer: {
+    width: "85%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  payAmountInput: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+  },
+  enterButton: {
+    backgroundColor: "#4285F4",
+    width: "100%",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  enterButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
