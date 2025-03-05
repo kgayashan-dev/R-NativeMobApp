@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   StatusBar,
   FlatList,
   TouchableOpacity,
+  TextInput,
+  Keyboard,
 } from "react-native";
 import Header from "@/components/Header";
 
@@ -20,6 +22,15 @@ type ReceiptItem = {
 };
 
 const MFReceiptList: React.FC = () => {
+  // State for total amount
+  // State for managing modal and pay amount
+  const [isPayModalVisible, setPayModalVisible] = useState(false);
+  const [totalAmount, setTotalAmount] = useState<string>("600000");
+
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptItem | null>(
+    null
+  );
+  const [payAmount, setPayAmount] = useState("");
   // Sample receipt data
   const receiptData: ReceiptItem[] = [
     {
@@ -33,16 +44,49 @@ const MFReceiptList: React.FC = () => {
       id: "CK000000012212",
       name: "Saman perera",
       rentalAmount: 100000,
+
       due: 0,
     },
-
     {
       id: "CK000000012212",
       name: "Saman perera",
       rentalAmount: 100000,
+      payAmount: 20000,
+      due: 0,
+    },
+    {
+      id: "CK000000012212",
+      name: "Saman perera",
+      rentalAmount: 100000,
+
+      due: 0,
+    },
+    {
+      id: "CK000000012212",
+      name: "Saman perera",
+      rentalAmount: 100000,
+      payAmount: 20000,
+      due: 0,
+    },
+    {
+      id: "CK000000012212",
+      name: "Saman perera",
+      rentalAmount: 100000,
+      payAmount: 20000,
       due: 0,
     },
   ];
+
+  // Handle pay amount entry
+  const handlePayAmountEnter = () => {
+    if (selectedReceipt) {
+      // Here you can add logic to process the pay amount
+      console.log(`Pay amount entered for ${selectedReceipt.id}: ${payAmount}`);
+      setPayModalVisible(false);
+      setPayAmount('');
+    }
+  };
+
 
   // Render individual receipt item
   const renderReceiptItem = ({ item }: { item: ReceiptItem }) => (
@@ -55,12 +99,12 @@ const MFReceiptList: React.FC = () => {
         <View style={styles.rentalAmountContainer}>
           <Text style={styles.rentalAmountLabel}>RentalAmt</Text>
           <Text style={styles.rentalAmountValue}>
-             {item.rentalAmount.toLocaleString()}
+            {item.rentalAmount.toLocaleString()}
           </Text>
         </View>
         <View style={styles.dueContainer}>
           <Text style={styles.dueLabel}>Due</Text>
-          <Text style={styles.dueValue}> {item.due}</Text>
+          <Text style={styles.dueValue}>{item.due}</Text>
         </View>
         {item.payAmount && (
           <View style={styles.payAmountContainer}>
@@ -73,6 +117,12 @@ const MFReceiptList: React.FC = () => {
     </View>
   );
 
+  // Handle save action
+  const handleSave = () => {
+    console.log("Total Amount Saved:", totalAmount);
+    Keyboard.dismiss();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#4285F4" barStyle="light-content" />
@@ -83,6 +133,23 @@ const MFReceiptList: React.FC = () => {
         keyExtractor={(item, index) => `${item.id}-${index}`}
         contentContainerStyle={styles.listContainer}
       />
+
+      {/* Total Amount Section */}
+      <View style={styles.totalAmountContainer}>
+        <Text style={styles.totalAmountTitle}>Total Amount</Text>
+        <View style={styles.totalAmountInputContainer}>
+          <TextInput
+            style={styles.totalAmountInput}
+            placeholder="Enter total amount"
+            value={totalAmount}
+            onChangeText={setTotalAmount}
+            keyboardType="numeric"
+          />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -94,6 +161,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
+    paddingVertical: 30,
   },
   receiptItemContainer: {
     backgroundColor: "#FFFFFF",
@@ -115,12 +183,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
   },
   receiptId: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#333",
     fontWeight: "500",
   },
   receiptName: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#0086fe",
   },
   receiptDetailsContainer: {
@@ -133,11 +201,11 @@ const styles = StyleSheet.create({
   },
   rentalAmountLabel: {
     color: "#666",
-    fontSize: 14,
+    fontSize: 12,
   },
   rentalAmountValue: {
     color: "#FF0000",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   payAmountContainer: {
@@ -149,7 +217,7 @@ const styles = StyleSheet.create({
   },
   payAmountText: {
     color: "#FF9800",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
   },
   dueContainer: {
@@ -158,11 +226,47 @@ const styles = StyleSheet.create({
   },
   dueLabel: {
     color: "#666",
-    fontSize: 14,
+    fontSize: 12,
   },
   dueValue: {
     color: "#4CAF50",
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  // Total Amount Section Styles
+  totalAmountContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 1,
+    borderTopColor: "#E0E0E0",
+  },
+  totalAmountTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#333",
+  },
+  totalAmountInputContainer: {
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  totalAmountInput: {
+    padding: 12,
+    fontSize: 16,
+    color: "#333",
+  },
+  saveButton: {
+    backgroundColor: "#4285F4",
+    borderRadius: 8,
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "white",
+    fontSize: 16,
     fontWeight: "600",
   },
 });

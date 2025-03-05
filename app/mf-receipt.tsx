@@ -170,14 +170,14 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: "white",
-    fontSize: 18,
+    fontSize: 14, // Reduced font size
     fontWeight: "bold",
   },
   subHeadingtext: {
     color: "black",
-    fontSize: 18,
-    paddingBottom:16,
-    fontWeight:"300",
+    fontSize: 14, // Reduced font size
+    paddingVertical: 25,
+    fontWeight: "300",
   },
   profileIcon: {
     backgroundColor: "white",
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   welcomeText: {
-    fontSize: 20,
+    fontSize: 18, // Reduced font size
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     color: "#333",
-    fontSize: 16,
+    fontSize: 12, // Reduced font size
   },
   dropdownButton: {
     borderWidth: 1,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dropdownButtonText: {
-    fontSize: 16,
+    fontSize: 14, // Reduced font size
     color: "#333",
   },
   modalOverlay: {
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   dropdownItemText: {
-    fontSize: 16,
+    fontSize: 14, // Reduced font size
     color: "#333",
   },
   submitButton: {
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14, // Reduced font size
   },
 });
 

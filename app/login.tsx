@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -18,15 +19,17 @@ const { height, width } = Dimensions.get("window");
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useState();
   const handleLogin = () => {
     console.log("Login attempted with:", username, password);
+    
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Adjust as needed
     >
       <StatusBar backgroundColor="#4287f5" barStyle="light-content" />
 
@@ -44,7 +47,10 @@ const LoginScreen = () => {
               style={styles.input}
               placeholder="Enter your username"
               value={username}
-              onChangeText={setUsername}
+              onChangeText={(text) => {
+                console.log("Username:", text); // Debugging line
+                setUsername(text);
+              }}
               placeholderTextColor="#888"
             />
 
@@ -53,12 +59,21 @@ const LoginScreen = () => {
               style={styles.input}
               placeholder="Enter your password"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                console.log("Password:", text); // Debugging line
+                setPassword(text);
+              }}
               secureTextEntry={true}
               placeholderTextColor="#888"
             />
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => {
+                console.log("Login button pressed"); // Debugging line
+                handleLogin();
+              }}
+            >
               <Text style={styles.loginButtonText}>Log in</Text>
             </TouchableOpacity>
           </View>
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
   headerText: {
     flex: 1,
     color: "white",
-    fontSize: 28,
+    fontSize: 24,
     paddingLeft: 18,
     paddingTop: 30,
     alignItems: "center",
@@ -118,7 +133,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   welcomeText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "left",
@@ -127,7 +142,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 8,
     color: "#333",
     fontWeight: "500",
@@ -139,7 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 12,
     marginBottom: 15,
-    fontSize: 16,
+    fontSize: 14,
     width: "100%",
   },
   loginButton: {
@@ -149,14 +164,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     width: "100%",
+    borderWidth: 1, // Debugging border
+    borderColor: "red", // Debugging border
   },
   loginButtonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
   footerContainer: {
-    paddingVertical: 20,
+    paddingVertical: 4,
     width: "100%",
   },
   logoContainer: {
@@ -164,12 +181,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logoImage: {
-    width: width * 0.8, // Adjust the width as needed
-    height: 100,
+    width: width * 0.9,
+    height: 80,
     marginBottom: 10,
   },
   logoText: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#666",
   },
 });

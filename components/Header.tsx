@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
   return (
     <View style={styles.header}>
       {/* {showBackButton && (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.backButton}>Back</Text>
         </TouchableOpacity>
       )} */}
