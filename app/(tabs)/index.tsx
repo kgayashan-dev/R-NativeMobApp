@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,92 +8,125 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  ImageBackground,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { BlurView } from "expo-blur";
+import { ChevronRight } from "lucide-react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Get screen dimensions
 const { width, height } = Dimensions.get("window");
 
 export default function HomeScreen() {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getToken = async () => {
+      const storedToken = await AsyncStorage.getItem("session_token");
+      if (!storedToken) {
+        router.replace("/login"); // Redirect if not logged in
+      } else {
+        setToken(storedToken);
+      }
+    };
+
+    getToken();
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Gradient Overlay */}
+    <View style={styles.container}>
+      {/* Gradient Background */}
       <LinearGradient
-        colors={["#1e90ff", "transparent"]} // Blue at the top, fading to transparent
-        locations={[0.3, 1]} // Adjust gradient transition
-        // style={styles.topGradientOverlay}-
+        colors={["#FFFFFF", "#E6F2FF"]}
+        style={styles.gradientBackground}
       />
 
-      {/* Main Content */}
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header Section */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.header}>PEOPLE'S CREDIT SOLUTIONS</Text>
-        </View>
-
-        {/* Logo Image Section */}
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../../assets/images/pcsLogo.jpeg")}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
-        </View>
-
-        {/* Welcome Message */}
-        <View style={styles.textContainer}>
-          <Text style={styles.welcomeText}>
-            Empowering Your Financial Journey
-          </Text>
-          <Text style={styles.subText}>
-            Seamless, Secure, and Smart Financial Solutions
-          </Text>
-        </View>
-
-        {/* Get Started Button */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => router.push("/login")}
+      {/* Content Container */}
+      <SafeAreaView style={styles.contentContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Get Started</Text>
+          {/* Header Section */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.header}>PEOPLE'S CREDIT</Text>
+            <Text style={styles.subHeader}>SOLUTIONS</Text>
           </View>
-        </TouchableOpacity>
-      </ScrollView>
 
-      {/* City Image at the Bottom with Top Gradient Overlay */}
-      {/* <ImageBackground
-        source={require("../../assets/images/city.jpeg")}
-        style={styles.bottomImage}
-        resizeMode="cover"
-      >
-        <LinearGradient
-          colors={["rgba(30,144,255,0.7)", "transparent"]}
-          locations={[0, 0.5]}
-          style={styles.bottomImageGradient}
-        />
-      </ImageBackground> */}
-    </SafeAreaView>
+          {/* Logo Section with Blur Effect */}
+          <View style={styles.logoWrapper}>
+            {Platform.OS === "ios" ? (
+              <BlurView intensity={30} style={styles.blurContainer}>
+                <Image
+                  source={require("../../assets/images/pcsLogo.jpeg")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </BlurView>
+            ) : (
+              <View style={styles.blurContainer}>
+                <Image
+                  source={require("../../assets/images/pcsLogo.jpeg")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Motivational Text */}
+          <View style={styles.textContainer}>
+            <Text style={styles.welcomeText}>
+              Empowering Your Financial Journey{token}
+            </Text>
+            <Text style={styles.subText}>
+              Seamless, Secure, and Smart Financial Solutions
+            </Text>
+          </View>
+
+          {/* Get Started Button */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => router.push("/login")}
+            activeOpacity={0.7}
+          >
+            <LinearGradient
+              colors={["#2196F3", "#0D47A1"]}
+              style={styles.gradientButton}
+            >
+              <Text style={styles.buttonText}>Get Started</Text>
+              <ChevronRight color="white" size={24} />
+            </LinearGradient>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+
+      {/* Bottom Wave Decoration */}
+      <View style={styles.bottomWave}>
+        <View style={styles.waveShadow} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", // Changed background color to match the gradient
+    backgroundColor: "#FFFFFF",
   },
-  topGradientOverlay: {
+  gradientBackground: {
     position: "absolute",
-    top: 0,
     left: 0,
     right: 0,
-    height: height * 0.3, // Adjust height as needed
-    zIndex: 0, // Ensure it's above the background but behind content
+    top: 0,
+    bottom: 0,
+  },
+  contentContainer: {
+    flex: 1,
+    zIndex: 2,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -101,58 +134,74 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    zIndex: 2, // Ensure content is above the gradient
   },
   headerContainer: {
-    marginTop: 10,
+    marginTop: 20,
+    alignItems: "center",
   },
   header: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "white", // Changed to white to stand out on blue background
+    fontSize: 32,
+    fontWeight: "900",
+    color: "#0D47A1",
     textAlign: "center",
     letterSpacing: 1,
   },
-  logoContainer: {
+  subHeader: {
+    fontSize: 24,
+    fontWeight: "300",
+    color: "#2196F3",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  logoWrapper: {
     width: width * 0.7,
     height: width * 0.5,
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: "hidden",
- 
-    elevation: 16,
-    marginBottom: 20,
+    marginBottom: 30,
+    alignSelf: "center",
+    borderWidth: 1,
+    borderColor: "#2196F3",
+  },
+  blurContainer: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: "hidden",
   },
   logoImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 10,
+    borderRadius: 20,
   },
   textContainer: {
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   welcomeText: {
-    fontSize: 22,
-    color: "white", // Changed to white
-    fontWeight: "600",
+    fontSize: 24,
+    color: "#0D47A1",
+    fontWeight: "700",
     textAlign: "center",
     marginBottom: 10,
   },
   subText: {
     fontSize: 16,
-    color: "white", // Changed to white
+    color: "#2196F3",
     textAlign: "center",
+    paddingHorizontal: 20,
   },
   buttonContainer: {
     width: width * 0.7,
-    marginTop: 10,
+    marginTop: 30,
   },
-  button: {
-    backgroundColor: "white",
+  gradientButton: {
+    flexDirection: "row",
     paddingVertical: 15,
+    paddingHorizontal: 20,
     borderRadius: 30,
     alignItems: "center",
-    shadowColor: "#000",
+    justifyContent: "space-between",
+    shadowColor: "#2196F3",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -162,23 +211,31 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   buttonText: {
-    color: "#1e90ff",
-    fontSize: 12,
+    color: "white",
+    fontSize: 16,
     fontWeight: "bold",
-    letterSpacing:0,
+    letterSpacing: 1,
   },
-  bottomImage: {
+  bottomWave: {
     position: "absolute",
     bottom: 0,
-    width: "100%",
-    height: height * 0.4,
-    zIndex: -1,
-  },
-  bottomImageGradient: {
-    position: "absolute",
     left: 0,
     right: 0,
-    top: 0,
-    height: "50%", // Gradient covers top half of the image
+    height: 100,
+    backgroundColor: "transparent",
+  },
+  waveShadow: {
+    flex: 1,
+    backgroundColor: "white",
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    shadowColor: "#2196F3",
+    shadowOffset: {
+      width: 0,
+      height: -5,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 6.27,
+    elevation: 10,
   },
 });

@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -13,76 +12,105 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { router } from "expo-router";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { height, width } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
-const LoginScreen = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useState();
-  const handleLogin = () => {
-    console.log("Login attempted with:", username, password);
-    
+const LoginScreen: React.FC = () => {
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleLogin = async () => {
+    setErrorMessage(null); // Reset previous error
+
+    if (!username.trim() || !password.trim()) {
+      setErrorMessage("Please enter both username and password.");
+      return;
+    }
+
+    setIsLoading(true); // Start loading
+
+    try {
+      const response = await axios.post(
+        "http://172.16.1.10:5246/users/login",
+        { username, password },
+        { timeout: 10000 }
+      );
+
+      if (response.data.success) {
+        console.log("object loaded successfully");
+        await AsyncStorage.setItem("session_token", response.data.token);
+        router.replace("/"); // Navigate to home after login
+      } else {
+        setErrorMessage(
+          response.data.message || "Login failed. Please try again."
+        );
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Adjust as needed
     >
       <StatusBar backgroundColor="#4287f5" barStyle="light-content" />
-
       <View style={styles.header}>
         <Text style={styles.headerText}>FINNECT</Text>
       </View>
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.contentContainer}>
           <Text style={styles.welcomeText}>Welcome Back!</Text>
-
+          {errorMessage && (
+            <Text style={{ color: "red", marginBottom: 10 }}>
+              {errorMessage}
+            </Text>
+          )}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Enter Username</Text>
             <TextInput
               style={styles.input}
               placeholder="Enter your username"
               value={username}
-              onChangeText={(text) => {
-                console.log("Username:", text); // Debugging line
-                setUsername(text);
-              }}
+              onChangeText={setUsername}
               placeholderTextColor="#888"
             />
-
             <Text style={styles.label}>Enter Password</Text>
             <TextInput
               style={styles.input}
               placeholder="Enter your password"
               value={password}
-              onChangeText={(text) => {
-                console.log("Password:", text); // Debugging line
-                setPassword(text);
-              }}
-              secureTextEntry={true}
+              onChangeText={setPassword}
+              secureTextEntry
               placeholderTextColor="#888"
             />
-
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={() => {
-                console.log("Login button pressed"); // Debugging line
-                handleLogin();
-              }}
+              onPress={handleLogin}
+              disabled={isLoading}
             >
-              <Text style={styles.loginButtonText}>Log in</Text>
+              <Text style={styles.loginButtonText}>
+                {isLoading ? "Logging in..." : "Log in"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-
         <View style={styles.footerContainer}>
           <View style={styles.logoContainer}>
             <Image
-              source={require("../assets/images/pcsLogo.jpeg")} // Replace with your actual logo path
+              source={require("../assets/images/pcsLogo.jpeg")}
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -101,7 +129,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     width: "100%",
-    overflow: "hidden",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -115,13 +142,10 @@ const styles = StyleSheet.create({
     height: "18%",
   },
   headerText: {
-    flex: 1,
     color: "white",
     fontSize: 24,
     paddingLeft: 18,
     paddingTop: 30,
-    alignItems: "center",
-    justifyContent: "center",
     fontWeight: "bold",
     textAlign: "left",
   },
@@ -136,7 +160,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "left",
   },
   inputContainer: {
     width: "100%",
@@ -164,8 +187,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     width: "100%",
-    borderWidth: 1, // Debugging border
-    borderColor: "red", // Debugging border
   },
   loginButtonText: {
     color: "white",
