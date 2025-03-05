@@ -169,7 +169,13 @@ const MFReceiptList: React.FC = () => {
           keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Enter Pay Amount</Text>
+            {/* Updated Modal Title */}
+            <Text style={styles.modalTitle}>
+              Enter Pay Amount for{" "}
+              <Text style={{ fontSize: 14 }}>
+                {selectedReceipt ? selectedReceipt.id : ""}
+              </Text>
+            </Text>
             <TextInput
               style={styles.payAmountInput}
               placeholder="Enter Pay Amount"
@@ -278,21 +284,26 @@ const styles = StyleSheet.create({
   // Total Amount Section Styles
   totalAmountContainer: {
     paddingHorizontal: 16,
+    borderRadius: 40,
     paddingVertical: 16,
+
     backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
   },
   totalAmountTitle: {
     fontSize: 16,
+    textAlign: "center",
     fontWeight: "600",
     marginBottom: 10,
     color: "#333",
   },
   totalAmountInputContainer: {
     borderWidth: 1,
+
+    borderRadius: 40,
     borderColor: "#CCCCCC",
-    borderRadius: 8,
+
     marginBottom: 16,
   },
   totalAmountInput: {
@@ -320,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     marginBottom: 15,
   },
   payAmountInput: {
