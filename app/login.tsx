@@ -10,6 +10,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  Alert,
   ScrollView,
 } from "react-native";
 import { router } from "expo-router";
@@ -39,7 +40,7 @@ const LoginScreen: React.FC = () => {
 
     try {
       // Properly configure fetch with method, headers, and body
-      const response = await fetch("/users/login", {
+      const response = await fetch("http://127.0.0.1:5093/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +49,7 @@ const LoginScreen: React.FC = () => {
           username: username.trim(),
           password: password.trim(),
         }),
-        timeout: 10000, // 10 seconds timeout
+        // 10 seconds timeout
       });
 
       // Parse the response
@@ -96,6 +97,15 @@ const LoginScreen: React.FC = () => {
     }
   };
 
+  const getMoviesFromApiAsync = async () => {
+    try {
+      const response = await fetch("https://reactnative.dev/movies.json");
+      const json = await response.json();
+      console.log(json.movies);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -133,7 +143,7 @@ const LoginScreen: React.FC = () => {
             />
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={handleLogin}
+              onPress={getMoviesFromApiAsync}
               disabled={isLoading}
             >
               <Text style={styles.loginButtonText}>
