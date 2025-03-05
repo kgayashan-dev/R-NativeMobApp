@@ -61,7 +61,7 @@ export default function HomeScreen() {
             {Platform.OS === "ios" ? (
               <BlurView intensity={30} style={styles.blurContainer}>
                 <Image
-                  source={require("../../assets/images/pcsLogo.jpeg")}
+                  source={require("../assets/images/pcsLogo.jpeg")}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
@@ -69,7 +69,7 @@ export default function HomeScreen() {
             ) : (
               <View style={styles.blurContainer}>
                 <Image
-                  source={require("../../assets/images/pcsLogo.jpeg")}
+                  source={require("../assets/images/pcsLogo.jpeg")}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
