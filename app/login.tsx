@@ -40,15 +40,9 @@ const LoginScreen: React.FC = () => {
         { username, password },
         { timeout: 10000 }
       );
+      console.log(username, password);
 
-      if (response.data.success) {
-        console.log("object loaded successfully");
-        await AsyncStorage.setItem("session_token", response.data.token);
-        router.replace("/"); // Navigate to home after login
-      } else {
-        setErrorMessage(
-          response.data.message || "Login failed. Please try again."
-        );
+      
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
