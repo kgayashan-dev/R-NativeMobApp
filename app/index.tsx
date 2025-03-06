@@ -27,7 +27,7 @@ export default function HomeScreen() {
     const getToken = async () => {
       const storedToken = await AsyncStorage.getItem("session_token");
       if (!storedToken) {
-        router.replace("/login"); // Redirect if not logged in
+        // router.replace("/"); // Redirect if not logged in
       } else {
         setToken(storedToken);
       }
@@ -60,11 +60,11 @@ export default function HomeScreen() {
           <View style={styles.logoWrapper}>
             {Platform.OS === "ios" ? (
               <BlurView intensity={30} style={styles.blurContainer}>
-                <Image
-                  source={require("../assets/images/pcsLogo.jpeg")}
+                {/* <Image
+                  source={require("../assets/images/")}
                   style={styles.logoImage}
                   resizeMode="contain"
-                />
+                /> */}
               </BlurView>
             ) : (
               <View style={styles.blurContainer}>
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
   },
   gradientButton: {
     flexDirection: "row",
+    borderColor:'blue',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,

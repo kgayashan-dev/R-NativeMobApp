@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native"; // Import useNavigation
-import { useRouter } from "expo-router";
+import { useRouter } from "expo-router"; // Import useRouter from expo-router
+import { ArrowLeft } from "lucide-react-native"; // Import ArrowLeft icon
 
 type HeaderProps = {
   title: string;
@@ -9,19 +9,28 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
-  const navigation = useNavigation(); 
-  const router = useRouter();
+  const router = useRouter(); // Use the useRouter hook
+
+  // Handle back button press
+  const handleBackPress = () => {
+    router.back(); // Navigate back to the previous screen
+  };
+
+  // Handle profile icon press
   const handleProfilePress = () => {
-    router.back();
+    // Add your profile navigation logic here
+    console.log("Profile icon pressed");
   };
 
   return (
     <View style={styles.header}>
-      {/* {showBackButton && (
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backButton}>Back</Text>
+      {showBackButton && (
+        <TouchableOpacity onPress={handleBackPress}>
+          <Text style={styles.backButton}>
+            <ArrowLeft size={24} color="white" /> {/* Use ArrowLeft icon */}
+          </Text>
         </TouchableOpacity>
-      )} */}
+      )}
       <Text style={styles.headerTitle}>{title}</Text>
       <TouchableOpacity style={styles.profileIcon} onPress={handleProfilePress}>
         <Text style={styles.profileText}>A</Text>

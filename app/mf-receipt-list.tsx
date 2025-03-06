@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     marginBottom: 15,
   },
   payAmountInput: {
