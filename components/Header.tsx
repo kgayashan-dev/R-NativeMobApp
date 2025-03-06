@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router"; // Import useRouter from expo-router
-import { ArrowLeft } from "lucide-react-native"; // Import ArrowLeft icon
+import { ArrowLeft, User } from "lucide-react-native"; // Import ArrowLeft icon
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Platform } from "react-native";
+import { useAuth } from "../context/AuthContext";
 type HeaderProps = {
   title: string;
   showBackButton?: boolean; // Optional prop to show a back button
@@ -17,20 +18,8 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
   const handleBackPress = () => {
     router.back(); // Navigate back to the previous screen
   };
-
+  const { user, logout } = useAuth();
   // Handle profile icon press
-  const handleLogout = async () => {
-    if (Platform.OS === "web") {
-      // Use localStorage for the web
-      localStorage.removeItem("userToken");
-    } else {
-      // Use AsyncStorage for mobile
-      await AsyncStorage.removeItem("userToken");
-    }
-
-    // Navigate back to the login screen
-    router.replace("/login");
-  };
 
   return (
     <View style={styles.header}>
@@ -42,8 +31,8 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton }) => {
         </TouchableOpacity>
       )}
       <Text style={styles.headerTitle}>{title}</Text>
-      <TouchableOpacity style={styles.profileIcon} onPress={handleLogout}>
-        <Text style={styles.profileText}>:)</Text>
+      <TouchableOpacity style={styles.profileIcon} onPress={logout}>
+        <Text style={styles.profileText}><User/></Text>
       </TouchableOpacity>
     </View>
   );
