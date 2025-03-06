@@ -165,7 +165,7 @@ const LoginScreen: React.FC = () => {
         setErrorMessage("Request timed out. Please try again.");
         Alert.alert("Timeout", "Request timed out. Please try again.");
       } else {
-        console.error("Login Error:", error);
+        // console.error("Login Error:", error);
         setErrorMessage("An unexpected error occurred. Please try again.");
         Alert.alert("Error", "An unexpected error occurred. Please try again.");
       }
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4287f5",
     paddingVertical: 30,
     width: "100%",
-    height: "18%",
+    height: "12%",
   },
   headerText: {
     color: "white",
