@@ -181,7 +181,7 @@ const LoginScreen: React.FC = () => {
         Alert.alert("Timeout", "Request timed out. Please try again.");
       } else {
         // console.error("Login Error:", error);
-        setErrorMessage("An unexpected error occurred. Please try again.");
+        setErrorMessage("An unexpected error occurred. Please try again!");
         Alert.alert("Error", "An unexpected error occurred. Please try again.");
       }
     } finally {
@@ -199,6 +199,7 @@ const LoginScreen: React.FC = () => {
     setApiStatus("idle");
   };
 
+  
   // Render network error state
   const renderNetworkError = () => (
     <View style={styles.networkErrorContainer}>

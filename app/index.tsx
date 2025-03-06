@@ -27,7 +27,7 @@ export default function HomeScreen() {
     const getToken = async () => {
       const storedToken = await AsyncStorage.getItem("session_token");
       if (!storedToken) {
-        // router.replace("/"); // Redirect if not logged in
+        router.replace("/"); // Redirect if not logged in
       } else {
         setToken(storedToken);
       }

@@ -53,7 +53,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   return (
     <View style={styles.dropdownContainer}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{label}?</Text>
       <TouchableOpacity
         style={[styles.dropdownButton, disabled && styles.disabledButton]}
         onPress={() => !disabled && setVisible(true)}
