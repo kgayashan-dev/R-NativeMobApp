@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,22 +11,23 @@ import {
   FlatList,
   Dimensions,
   ListRenderItem,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-// Define types for the dropdown data
 type DropdownItem = {
   label: string;
   value: string;
 };
 
-// Define props for the CustomDropdown component
 type CustomDropdownProps = {
   label: string;
   data: DropdownItem[];
   onSelect: (value: string) => void;
   selectedValue: string;
+  disabled?: boolean;
 };
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -34,6 +35,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   data,
   onSelect,
   selectedValue,
+  disabled = false,
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -53,11 +55,16 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     <View style={styles.dropdownContainer}>
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity
-        style={styles.dropdownButton}
-        onPress={() => setVisible(true)}
+        style={[styles.dropdownButton, disabled && styles.disabledButton]}
+        onPress={() => !disabled && setVisible(true)}
+        disabled={disabled}
       >
-        <Text style={styles.dropdownButtonText}>
-          {selectedValue || "Select an option"}
+        <Text
+          style={[styles.dropdownButtonText, disabled && styles.disabledText]}
+        >
+          {selectedValue 
+            ? data.find(item => item.value === selectedValue)?.label || selectedValue 
+            : "Select an option"}
         </Text>
       </TouchableOpacity>
 
@@ -88,38 +95,75 @@ const MFReceiptLogin: React.FC = () => {
   const [cashierBranch, setCashierBranch] = useState<string>("");
   const [loanBranch, setLoanBranch] = useState<string>("");
   const [center, setCenter] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [apiStatus, setApiStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  useEffect(() => {
+    // If center is selected, you could auto-populate the branches based on API data
+    if (center) {
+      setApiStatus("loading");
+      // Simulate API call
+      setTimeout(() => {
+        setCashierBranch("branch1");
+        setLoanBranch("branchA");
+        setApiStatus("success");
+      }, 1000);
+    }
+  }, [center]);
 
   const handleSubmit = () => {
-    console.log("Submitted:", { cashierBranch, loanBranch, center });
+    if (!center) {
+      setErrorMessage("Please select a center");
+      return;
+    }
+    
+    if (!searchQuery.trim()) {
+      setErrorMessage("Please enter a username");
+      return;
+    }
+    
+    setErrorMessage("");
+    setApiStatus("loading");
+    
+    // Simulate API call
+    setTimeout(() => {
+      console.log("Submitted:", { cashierBranch, loanBranch, center, searchQuery });
+      setApiStatus("success");
+      // Handle success navigation or feedback here
+    }, 1500);
   };
 
-  const cashierBranches: DropdownItem[] = [
-    { label: "Branch 1", value: "branch1" },
-    { label: "Branch 2", value: "branch2" },
-  ];
+  const cashierBranches = useMemo(
+    () => [
+      { label: "Branch 1", value: "branch1" },
+      { label: "Branch 2", value: "branch2" },
+    ],
+    []
+  );
 
-  const loanBranches: DropdownItem[] = [
-    { label: "Branch A", value: "branchA" },
-    { label: "Branch B", value: "branchB" },
-  ];
+  const loanBranches = useMemo(
+    () => [
+      { label: "Branch A", value: "branchA" },
+      { label: "Branch B", value: "branchB" },
+    ],
+    []
+  );
 
-  const centers: DropdownItem[] = [
-    { label: "Center 1", value: "center1" },
-    { label: "Center 2", value: "center2" },
-  ];
+  const centers = useMemo(
+    () => [
+      { label: "Center 1", value: "center1" },
+      { label: "Center 2", value: "center2" },
+    ],
+    []
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#4285F4" barStyle="light-content" />
-      {/* Reusable Header */}
-      <Header
-        title="MF Receipt"
-        // onProfilePress={handleProfilePress}
-        showBackButton={true}
-      />
+      <Header title="MF Receipt" showBackButton={true} />
 
       <View style={styles.content}>
-        {/* <Text style={styles.welcomeText}>Welcome Admin!</Text> */}
         <Text style={styles.subHeadingtext}>
           Select the options given below to take the receipts list.
         </Text>
@@ -129,6 +173,7 @@ const MFReceiptLogin: React.FC = () => {
           data={cashierBranches}
           onSelect={setCashierBranch}
           selectedValue={cashierBranch}
+          disabled={true}
         />
 
         <CustomDropdown
@@ -136,6 +181,7 @@ const MFReceiptLogin: React.FC = () => {
           data={loanBranches}
           onSelect={setLoanBranch}
           selectedValue={loanBranch}
+          disabled={true}
         />
 
         <CustomDropdown
@@ -145,8 +191,41 @@ const MFReceiptLogin: React.FC = () => {
           selectedValue={center}
         />
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit</Text>
+        <Text style={styles.label}>Search by Id, </Text>
+        <TextInput
+          style={[
+            styles.input,
+            errorMessage && styles.inputError,
+            apiStatus === "loading" && styles.inputDisabled
+          ]}
+          placeholder="Enter your id or name"
+          value={searchQuery}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            if (errorMessage) setErrorMessage("");
+          }}
+          placeholderTextColor="#888"
+          autoCapitalize="none"
+          editable={apiStatus !== "loading"}
+        />
+        
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
+
+        <TouchableOpacity 
+          style={[
+            styles.submitButton, 
+            apiStatus === "loading" && styles.disabledButton
+          ]} 
+          onPress={handleSubmit}
+          disabled={apiStatus === "loading"}
+        >
+          {apiStatus === "loading" ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.submitButtonText}>Submit</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -170,12 +249,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: "white",
-    fontSize: 14, // Reduced font size
+    fontSize: 14,
     fontWeight: "bold",
   },
   subHeadingtext: {
     color: "black",
-    fontSize: 14, // Reduced font size
+    fontSize: 14,
     paddingVertical: 25,
     fontWeight: "300",
   },
@@ -195,7 +274,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   welcomeText: {
-    fontSize: 18, // Reduced font size
+    fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
@@ -206,7 +285,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     color: "#333",
-    fontSize: 12, // Reduced font size
+    fontSize: 12,
   },
   dropdownButton: {
     borderWidth: 1,
@@ -216,7 +295,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dropdownButtonText: {
-    fontSize: 14, // Reduced font size
+    fontSize: 14,
     color: "#333",
   },
   modalOverlay: {
@@ -237,20 +316,49 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   dropdownItemText: {
-    fontSize: 14, // Reduced font size
+    fontSize: 14,
     color: "#333",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 12,
+    fontSize: 14,
+    color: "#333",
+    backgroundColor: "#fff",
+  },
+  inputError: {
+    borderColor: "#ff3b30",
+  },
+  inputDisabled: {
+    backgroundColor: "#f0f0f0",
+    color: "#999",
+  },
+  errorText: {
+    color: "#ff3b30",
+    fontSize: 12,
+    marginTop: 5,
   },
   submitButton: {
     backgroundColor: "#4285F4",
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 20,
+    height: 50,
   },
   submitButtonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 14, // Reduced font size
+    fontSize: 14,
+  },
+  disabledButton: {
+    backgroundColor: "#ecedf1",
+  },
+  disabledText: {
+    color: "#999",
   },
 });
 

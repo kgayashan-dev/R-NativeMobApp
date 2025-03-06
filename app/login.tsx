@@ -18,7 +18,8 @@ import { router, useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../context/AuthContext";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Home } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -30,12 +31,12 @@ const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  
+
   // API and error states
   const [apiStatus, setApiStatus] = useState<ApiStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [networkAvailable, setNetworkAvailable] = useState<boolean>(true);
-  
+
   const router = useRouter();
   const { login } = useAuth();
 
@@ -45,7 +46,7 @@ const LoginScreen: React.FC = () => {
       try {
         setApiStatus("loading");
         const storedUserData = await AsyncStorage.getItem("userData");
-        
+
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
           // Validate the stored session data
@@ -71,12 +72,12 @@ const LoginScreen: React.FC = () => {
       setErrorMessage("Username is required");
       return false;
     }
-    
+
     if (!password) {
       setErrorMessage("Password is required");
       return false;
     }
-    
+
     setErrorMessage("");
     return true;
   };
@@ -85,7 +86,7 @@ const LoginScreen: React.FC = () => {
   const handleLogin = async () => {
     // Reset previous errors
     setErrorMessage("");
-    
+
     // Validate inputs
     if (!validateInputs()) {
       return;
@@ -94,20 +95,20 @@ const LoginScreen: React.FC = () => {
     try {
       // Set loading state
       setApiStatus("loading");
-      
+
       // Make API request with timeout for better error handling
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
-      
+
       const response = await fetch("http://localhost:5093/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       const data = await response.json();
 
       if (response.ok) {
@@ -118,10 +119,10 @@ const LoginScreen: React.FC = () => {
 
           // Update status
           setApiStatus("success");
-          
+
           // Clear any existing errors
           setErrorMessage("");
-          
+
           // Call login function from context
           login(data);
 
@@ -136,16 +137,22 @@ const LoginScreen: React.FC = () => {
       } else {
         // Handle different error status codes
         setApiStatus("error");
-        
+
         if (response.status === 401) {
           setErrorMessage("Invalid username or password");
           Alert.alert("Login Failed", "Invalid username or password");
         } else if (response.status === 403) {
           setErrorMessage("Your account is locked. Please contact support.");
-          Alert.alert("Account Locked", "Your account is locked. Please contact support.");
+          Alert.alert(
+            "Account Locked",
+            "Your account is locked. Please contact support."
+          );
         } else if (response.status >= 500) {
           setErrorMessage("Server error. Please try again later.");
-          Alert.alert("Server Error", "Server is currently unavailable. Please try again later.");
+          Alert.alert(
+            "Server Error",
+            "Server is currently unavailable. Please try again later."
+          );
         } else {
           // Generic error message for other status codes
           setErrorMessage(data?.message || "Login failed");
@@ -155,12 +162,20 @@ const LoginScreen: React.FC = () => {
     } catch (error) {
       // Set error state
       setApiStatus("error");
-      
+
       // Handle different error types
-      if (error instanceof TypeError && error.message.includes("Network request failed")) {
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Network request failed")
+      ) {
         setNetworkAvailable(false);
-        setErrorMessage("Network error. Please check your internet connection.");
-        Alert.alert("Network Error", "Please check your internet connection and try again.");
+        setErrorMessage(
+          "Network error. Please check your internet connection."
+        );
+        Alert.alert(
+          "Network Error",
+          "Please check your internet connection and try again."
+        );
       } else if (error instanceof DOMException && error.name === "AbortError") {
         setErrorMessage("Request timed out. Please try again.");
         Alert.alert("Timeout", "Request timed out. Please try again.");
@@ -188,7 +203,9 @@ const LoginScreen: React.FC = () => {
   const renderNetworkError = () => (
     <View style={styles.networkErrorContainer}>
       <Ionicons name="cloud-offline-outline" size={50} color="#d32f2f" />
-      <Text style={styles.networkErrorText}>Network connection unavailable</Text>
+      <Text style={styles.networkErrorText}>
+        Network connection unavailable
+      </Text>
       <Text style={styles.networkErrorSubText}>
         Please check your internet connection and try again
       </Text>
@@ -206,12 +223,21 @@ const LoginScreen: React.FC = () => {
       <StatusBar backgroundColor="#4287f5" barStyle="light-content" />
       <View style={styles.header}>
         <Text style={styles.headerText}>FINNECT</Text>
+        <Text style={styles.headerIcon}>
+          <TouchableOpacity
+            style={styles.passwordVisibilityToggle}
+            onPress={() => router.push("/")}
+            disabled={apiStatus === "loading"}
+          >
+            <Home size={24} color="#fff" />
+          </TouchableOpacity>
+        </Text>
       </View>
 
       {!networkAvailable ? (
         renderNetworkError()
       ) : (
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
         >
@@ -223,12 +249,12 @@ const LoginScreen: React.FC = () => {
                   <Text style={styles.errorText}>{errorMessage}</Text>
                 </View>
               ) : null}
-              
+
               <Text style={styles.label}>Enter Username</Text>
               <TextInput
                 style={[
                   styles.input,
-                  errorMessage && !username ? styles.inputError : null
+                  errorMessage && !username ? styles.inputError : null,
                 ]}
                 placeholder="Enter your username"
                 value={username}
@@ -240,13 +266,13 @@ const LoginScreen: React.FC = () => {
                 autoCapitalize="none"
                 editable={apiStatus !== "loading"}
               />
-              
+
               <Text style={styles.label}>Enter Password</Text>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[
                     styles.passwordInput,
-                    errorMessage && !password ? styles.inputError : null
+                    errorMessage && !password ? styles.inputError : null,
                   ]}
                   placeholder="Enter your password"
                   value={password}
@@ -258,23 +284,23 @@ const LoginScreen: React.FC = () => {
                   placeholderTextColor="#888"
                   editable={apiStatus !== "loading"}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.passwordVisibilityToggle}
                   onPress={() => setShowPassword(!showPassword)}
                   disabled={apiStatus === "loading"}
                 >
-                  <Ionicons 
-                    name={showPassword ? "eye-off-outline" : "eye-outline"} 
-                    size={24} 
-                    color="#666" 
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={24}
+                    color="#666"
                   />
                 </TouchableOpacity>
               </View>
-              
+
               <TouchableOpacity
                 style={[
                   styles.loginButton,
-                  apiStatus === "loading" ? styles.loginButtonDisabled : null
+                  apiStatus === "loading" ? styles.loginButtonDisabled : null,
                 ]}
                 onPress={handleLogin}
                 disabled={apiStatus === "loading"}
@@ -287,7 +313,7 @@ const LoginScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-          
+
           <View style={styles.footerContainer}>
             <View style={styles.logoContainer}>
               <Image
@@ -317,20 +343,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    justifyContent: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: "#4287f5",
     paddingVertical: 30,
+    paddingHorizontal: 18,
     width: "100%",
     height: "12%",
   },
   headerText: {
     color: "white",
     fontSize: 24,
-    paddingLeft: 18,
-    paddingTop: 30,
     fontWeight: "bold",
-    textAlign: "left",
   },
+  headerIcon: {
+    fontSize: 24,
+    color: "white",
+  },
+
   contentContainer: {
     flex: 1,
     justifyContent: "flex-start",
