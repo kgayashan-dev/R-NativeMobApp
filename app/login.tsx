@@ -13,7 +13,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -23,87 +23,30 @@ const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const router = useRouter();
   const handleLogin = async () => {
-    // Reset previous error
-    setErrorMessage(null);
-
-    // Validate input
-    if (!username.trim() || !password.trim()) {
-      setErrorMessage("Please enter both username and password.");
+    if (!username || !password) {
+      Alert.alert("Error", "Please enter email and password");
       return;
     }
 
-    // Start loading
-    setIsLoading(true);
-
     try {
-      // Properly configure fetch with method, headers, and body
-      const response = await fetch("http://127.0.0.1:5093/users/login", {
+      const response = await fetch("http://localhost:5093/api/users/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password: password.trim(),
-        }),
-        // 10 seconds timeout
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       });
 
-      // Parse the response
-      const responseData = await response.json();
-
-      // Check response status
+      const data = await response.json();
       if (response.ok) {
-        // Successfully logged in
-        // Store the authentication token
-        await AsyncStorage.setItem("userToken", responseData.token);
-
-        // Optional: Store user information
-        await AsyncStorage.setItem(
-          "userData",
-          JSON.stringify(responseData.user)
-        );
-
-        // Navigate to the main screen
-        router.replace("/"); // Adjust the route as per your app's navigation
+        await AsyncStorage.setItem("userData", JSON.stringify(data));
+        alert("Success");
+        router.push("/mf-receipt");
       } else {
-        // Handle login failure
-        setErrorMessage(
-          responseData.message || "Login failed. Please try again."
-        );
+        console.log("Error", data.message || "Invalid Credentials");
       }
     } catch (error) {
-      // Handle network or other errors
-      console.error("Login error:", error);
-
-      // More specific error handling
-      if (error instanceof TypeError) {
-        setErrorMessage("Network error. Please check your connection.");
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
-      }
-
-      // Optional: Show an alert for critical errors
-      Alert.alert(
-        "Login Error",
-        "Unable to log in. Please check your credentials and network connection."
-      );
-    } finally {
-      // Stop loading
-      setIsLoading(false);
-    }
-  };
-
-  const getMoviesFromApiAsync = async () => {
-    try {
-      const response = await fetch("https://reactnative.dev/movies.json");
-      const json = await response.json();
-      console.log(json.movies);
-    } catch (error) {
-      console.error(error);
+      console.log("Error", "Network Error or Server Down");
     }
   };
   return (
@@ -118,11 +61,6 @@ const LoginScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.contentContainer}>
           <Text style={styles.welcomeText}>Welcome Back!</Text>
-          {errorMessage && (
-            <Text style={{ color: "red", marginBottom: 10 }}>
-              {errorMessage}
-            </Text>
-          )}
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Enter Username</Text>
             <TextInput
@@ -143,7 +81,7 @@ const LoginScreen: React.FC = () => {
             />
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={getMoviesFromApiAsync}
+              onPress={handleLogin} // btn login
               disabled={isLoading}
             >
               <Text style={styles.loginButtonText}>
